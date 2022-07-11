@@ -1,0 +1,14 @@
+select * from master..sysprocesses
+where last_batch <= dateadd(hh,-48,getdate()) and status = ‘sleeping’
+order by last_batch
+
+
+
+How can I find the code of the blocking session, in this case, the session 75 when the session's status is 'sleeping'?
+
+SELECT db_name(S.database_id) AS DatabaseName,
+        ST.text
+FROM   sys.dm_exec_connections AS C
+       JOIN sys.dm_exec_sessions AS S ON S.session_id = C.session_id
+       OUTER APPLY sys.dm_exec_sql_text(most_recent_sql_handle) AS ST
+WHERE  C.session_id = 75;

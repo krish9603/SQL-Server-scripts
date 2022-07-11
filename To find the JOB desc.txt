@@ -1,0 +1,5 @@
+To find the JOB desc:
+--------------------------------------------       
+
+
+exec msdb.dbo.sp_help_job

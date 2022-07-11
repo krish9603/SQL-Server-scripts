@@ -1,0 +1,18 @@
+Query to find the execution time of SP
+------------------------------------------------------------
+SELECT
+    SCHEMA_NAME(sysobject.schema_id) SchemaName,
+    OBJECT_NAME(stats.object_id) SPName, 
+    cached_time, last_execution_time, 
+    execution_count,
+    total_elapsed_time/execution_count 
+            AS avg_elapsed_time
+FROM 
+    sys.dm_exec_procedure_stats stats
+    INNER JOIN sys.objects sysobject 
+        ON sysobject.object_id = stats.object_id 
+WHERE
+    sysobject.type = 'P'
+ORDER BY
+    stats.last_execution_time DESC
+-------------------------------------------------------------

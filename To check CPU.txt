@@ -1,0 +1,7 @@
+TO CHECK CPU 
+-------------------------------------------------------------------
+
+select  Countervalue as 'Countervalue(CPU)', counterDateTime from admin..t_dba_CounterData_PS
+where CounterName_Alias like '%CPU%' and counterDateTime between '2022-01-27 00:19:13.080' and '2022-01-27 03:38:59.099'
+
+order by CounterDateTime desc

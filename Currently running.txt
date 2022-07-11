@@ -1,0 +1,29 @@
+--Currently Running
+--------------------------------------------------------------------
+
+SELECT distinct ss.Session_ID as ss_SessionID
+, er.blocking_session_id erblocking_session_id , COALESCE(er.STATUS, ss.STATUS) Session_status ,COALESCE(DB_NAME(er.database_id),DB_NAME(ss.database_id)) [Database]
+,ISNULL(OBJECT_NAME(esql.[ObjectId],COALESCE(er.database_id,ss.database_id)), 'AdhocQuery/NA') [Object] ,ss.original_login_name AS [Login]
+,COALESCE(er.command,'AWAITING COMMAND') Command, er.last_wait_type Last_Wait_Type, er.wait_resource Wait_Resource, er.wait_time,COALESCE(er.reads, ss.reads) + COALESCE(er.writes, ss.writes) + COALESCE(er.logical_reads, ss.logical_reads ) AS Total_IO,COALESCE(er.cpu_time, ss.cpu_time) [CPU],ss.Host_Name [Host] ,ss.Program_Name [Program]
+--,COALESCE(er.reads, ss.reads) Reads,COALESCE(er.writes, ss.writes) Writes,COALESCE(er.logical_reads, ss.logical_reads ) Logical_Reads
+,ISNULL(er.Percent_Complete,0) Percent_Complete,COALESCE(er.Total_elapsed_time/(1000*60),ss.Total_elapsed_time) [Elapsed_Time(Min)],ss.Last_request_start_time,ss.Login_time
+,COALESCE(er.Open_Transaction_Count, ss.Open_Transaction_Count) Open_Transaction_Count,owt.Resource_description
+,CASE er.transaction_isolation_level WHEN 0 THEN 'Unspecified' WHEN 1 THEN 'ReadUncomitted' WHEN 2 THEN 'ReadCommitted' WHEN 3 THEN 'Repeatable' WHEN 4 THEN 'Serializable' WHEN 5 THEN 'Snapshot' END [Isolation_level]
+,esql.[ObjectId],ss.Last_Request_End_Time,er.wait_time [Wait_Time(ms)],(er.Estimated_Completion_Time/60000) [ETA (Min)]
+,CASE WHEN ISNULL(er.statement_start_offset,0) > 0 THEN CASE ISNULL(er.statement_end_offset,0) WHEN -1 THEN SUBSTRING([esql].[text], (ISNULL(er.statement_start_offset,0)/2) + 1, 2147483647)
+ELSE SUBSTRING([esql].[text], (ISNULL(er.statement_start_offset,0)/2) + 1, (ISNULL(er.statement_end_offset,0) - ISNULL(er.statement_start_offset,0))/2) END ELSE CASE ISNULL(er.statement_end_offset,0)
+WHEN -1 THEN RTRIM(LTRIM([esql].[text])) ELSE LEFT([esql].[text], (ISNULL(er.statement_end_offset,0)/2) +1) END END AS [Executeing_sql]
+,IbufferSS.event_info [Input_Buffer], er.Session_ID as er_SessionID
+FROM SYS.DM_EXEC_SESSIONS AS ss
+LEFT JOIN SYS.DM_EXEC_REQUESTS er ON er.session_id=ss.session_id
+LEFT JOIN SYS.DM_OS_WAITING_TASKs owt ON owt.session_id=ss.session_id
+--LEFT JOIN rootblocker rb ON rb.blocked = ss.session_id
+OUTER APPLY SYS.DM_EXEC_SQL_TEXT(er.SQL_HANDLE)AS esql
+OUTER APPLY SYS.dm_exec_input_buffer(ss.session_id,null )AS IbufferSS
+WHERE ss.is_user_process=1
+AND ss.session_id > 50 AND ss.session_id <> @@SPID
+--AND (ss.status <> 'SLEEPING' OR rb.blocked is not null )
+AND ss.program_name <> 'Microsoft SQL Server Management Studio - Transact-SQL IntelliSense'
+--AND er.last_wait_type ='SOS_SCHEDULER_YIELD'
+AND er.last_wait_type not IN( 'TRACEWRITE','SP_SERVER_DIAGNOSTICS_SLEEP', 'BROKER_RECEIVE_WAITFOR')
+ORDER BY ss.Last_request_start_time DESC

@@ -1,0 +1,4 @@
+To find recipients of a mail of a JOB
+---------------------------------------------------------------  
+
+select top 10 * from msdb.dbo.sysmail_allitems order by sent_date desc

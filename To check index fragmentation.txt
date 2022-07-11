@@ -1,0 +1,18 @@
+Index Fragmentation
+--------------------------------------------------------------------
+
+SELECT
+ps.database_id AS 'databaseID'
+, QUOTENAME(DB_NAME(ps.database_id)) AS 'databaseName'
+, ps.[object_id] AS 'objectID'
+, OBJECT_NAME(ps.[object_id]) AS 'TableName'
+, ps.index_id AS 'indexID'
+, si.name AS 'IndexName'
+, ps.avg_fragmentation_in_percent AS 'fragmentation'
+, ps.page_count AS 'page_count'
+, GETDATE() AS 'scanDate'
+FROM sys.dm_db_index_physical_stats(DB_ID() -- databaseid for which we need to check fragmentation 
+, OBJECT_ID(N'dbo.Ccard_Primary') -- objectid for which we need to check fragmentation, keep NULL for all Objects. 
+, NULL , NULL, 'LIMITED') AS ps
+JOIN SYS.INDEXES SI on PS.object_id = si.object_id and ps.index_id = si.index_id 
+--WHERE avg_fragmentation_in_percent >= 10

@@ -1,0 +1,6 @@
+To check blocking on particluar DB
+----------------------------------------------------
+
+select db_name(database_id) as dbname, command, session_id from sys.dm_exec_requests
+where command in('PARALLEL REDO HELP TASK', 'PARALLEL REDO TASK', 'DB STARTUP')
+and database_id= db_id('Mayors_CI')

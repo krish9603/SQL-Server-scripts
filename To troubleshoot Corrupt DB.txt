@@ -1,0 +1,30 @@
+Corrupt DB troubleshooting
+-----------------------------------------------------------
+
+USE master
+GO
+
+SELECT NAME,STATE_DESC FROM SYS.DATABASES
+WHERE STATE_DESC='SUSPECT'
+GO
+
+use ashutosh_ci_cpp 
+
+USE master
+GO
+
+ALTER DATABASE ashutosh_ci_cpp SET EMERGENCY
+GO
+
+dbcc checkdb
+
+USE master; 
+ALTER DATABASE ashutosh_ci_cpp SET SINGLE_USER WITH ROLLBACK IMMEDIATE; 
+
+GO
+
+DBCC CHECKDB ('ashutosh_ci_cpp', REPAIR_ALLOW_DATA_LOSS) WITH NO_INFOMSGS; 
+GO
+
+ALTER DATABASE ashutosh_ci_cpp SET MULTI_USER; 
+GO

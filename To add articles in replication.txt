@@ -1,0 +1,72 @@
+--------Check the table is part of replication-------
+
+select * from sysarticles where name='ExperianRequestLog'
+
+-------Check the Publication name and subscription details--------
+
+Sp_helpsubscription
+Sp_helppublication
+
+
+----------To add articles in Replication--------------
+
+EXEC sp_changepublication 
+@publication =Trans_Publication_Final_CI_Snapshot, 
+@property = 'allow_anonymous' , 
+@value = 'false' 
+ 
+
+EXEC sp_changepublication 
+@publication = Trans_Publication_Final_CI_Snapshot, 
+@property = 'immediate_sync' , 
+@value = 'false' 
+
+-----------> Add tables
+
+
+ DECLARE @tableName VARCHAR(500)
+ DECLARE @P_ins_cmd VARCHAR(500)
+ DECLARE @p_del_cmd VARCHAR(500)
+ DECLARE @p_upd_cmd VARCHAR(500)
+
+
+ SET @tableName = 'ExperianRequestLog' ---- REPLACE WITH THE TABLE NAME WE WANT TO ADD
+ SET @P_ins_cmd = N'CALL [dbo].[sp_MSins_dbo'  + @tableName + ']'
+ SET @p_del_cmd = N'CALL [dbo].[sp_MSdel_dbo'  + @tableName + ']' 
+ SET @p_upd_cmd = N'SCALL [dbo].[sp_MSupd_dbo'  + @tableName  + ']'
+
+
+ EXEC SP_ADDARTICLE @publication = N'Trans_Publication_Final_CI_Snapshot'
+  , @article = @tableName, @source_owner = N'dbo'
+  , @source_object = @tableName, @type = N'logbased', @description = null
+  , @creation_script = null, @pre_creation_cmd = N'drop', @schema_option = 0x000001400C0350DF
+  , @identityrangemanagementoption = N'manual', @destination_table = @tableName
+  , @destination_owner = N'dbo', @vertical_partition = N'false'
+  , @ins_cmd = @P_ins_cmd
+  , @del_cmd = @p_del_cmd 
+  , @upd_cmd = @p_upd_cmd
+
+
+
+-----------> Refresh Subscription
+
+
+EXEC SP_REFRESHSUBSCRIPTIONS @publication = N'Trans_Publication_Final_CI_Snapshot'
+
+
+-----------> Jobs 
+
+
+Run Snapshot Agent in publication side and Monitor the execution status of DA Job in Subscription Side
+
+
+-----------> Verfication
+
+
+select Count(*) from ExperianResponseLog (Both Primary and Reporting)
+select top 1* from  ExperianResponseLog with(nolock)
+
+
+
+
+

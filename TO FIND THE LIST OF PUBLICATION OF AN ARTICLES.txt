@@ -1,0 +1,5 @@
+TO FIND THE LIST OF PUBLICATION OF AN ARTICLES:
+
+
+
+SELECT sps.name FROM syspublications sps WITH(NOLOCK) JOIN sysarticles sas WITH(NOLOCK) ON sps.pubid = sas.pubid WHERE  sas.name = 'NonMonetaryLog';

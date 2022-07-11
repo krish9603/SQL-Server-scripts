@@ -1,0 +1,7 @@
+update stats for index
+----------------------------------------------------------
+
+USE DB_Name; 
+GO 
+UPDATE STATISTICS <table_name> <index_name>; 
+GO

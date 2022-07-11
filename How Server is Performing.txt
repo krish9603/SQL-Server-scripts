@@ -1,0 +1,24 @@
+HSP
+----------------------------------------------------------------
+
+DECLARE @P_FromDate DATETIME = DATEADD(minute, -15, CURRENT_TIMESTAMP), @P_ToDate datetime =GETDATE()
+--DECLARE @P_FromDate DATETIME = '2018-06-15 16:11:00.790', @P_ToDate datetime ='2018-06-19 16:11:00.790'
+EXEC  [p_dba_How_SQL_Performed] 
+ @FromDate = @P_FromDate
+,@ToDate = @P_ToDate
+,@Show_Blocking_data = 0
+,@Show_Deadlock_data = 0
+,@Show_PerfmonCounters_data = 1
+,@Show_Database_File_IO_data = 0
+,@Show_SQL_Waitstats = 1
+,@Show_ReplicationLatency=0
+,@ReplicationLatency_Threshold =4
+,@Show_SQL_errorLog_Data=0
+, @Show_XE_Trace_Data  =1
+, @Client_App_Name_XE_Trace_Data = NULL
+, @Database_Name_XE_Trace_Data = NULL
+, @Event_Name_XE_Trace_Data = NULL
+, @Object_Name_XE_Trace_Data = NULL
+, @QueryLevelDetail_XE_Trace_Data =0
+, @Duration_XE_Trace_Data_Sec =2
+,@Override_Max_Duration = 1

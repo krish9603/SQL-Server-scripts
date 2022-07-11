@@ -1,0 +1,16 @@
+SELECT so.name
+      ,[partition_id]
+      ,sp.[object_id]
+      ,[index_id]
+      ,[partition_number]
+      ,[hobt_id]
+      ,[rows]
+      ,[filestream_filegroup_id]
+      ,[data_compression]
+      ,[data_compression_desc]
+  FROM sys.partitions sp
+       JOIN sys.objects so ON so.object_id = sp.object_id
+       where name NOT LIKE 'sys%' and name NOT LIKE 'sqla%' and name NOT LIKE 'plan%' 
+       and name NOT LIKE 'persistent%' and name NOT LIKE 'queue_messages%'
+       and name NOT LIKE 'ifts%' and name NOT LIKE 'fulltext%'
+       ORDER BY partition_number desc

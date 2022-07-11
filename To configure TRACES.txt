@@ -1,0 +1,17 @@
+To configure TRACES
+-------------------------------------------------- 
+
+EXEC sp_configure 'show advanced options' ,1
+GO
+RECONFIGURE WITH OVERRIDE;
+GO
+EXEC sp_configure 'default trace enabled',0;
+GO
+RECONFIGURE WITH OVERRIDE;
+GO
+EXEC sp_configure 'default trace enabled',1;
+GO
+RECONFIGURE WITH OVERRIDE;
+GO
+EXEC sp_configure 'show advanced options',0;
+GO

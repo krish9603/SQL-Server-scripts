@@ -1,0 +1,12 @@
+To find the publication name of a database
+-----------------------------------------------------
+
+
+DECLARE @DbName varchar(500)
+DECLARE @PublicationName varchar(500)
+
+
+SELECT @DbName =  DB_NAME()
+SELECT @PublicationName =  name from syspublications
+PRINT  'Adding  article on the database ' + @DbName + char(10) + char(13)
+PRINT  'Publication name is ' + @PublicationName + char(10) + char(13)

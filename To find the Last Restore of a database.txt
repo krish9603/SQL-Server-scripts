@@ -1,0 +1,7 @@
+Last Restore of a database
+-----------------------------------------------
+
+use [msdb]
+select top 1 * from restorehistory
+where destination_database_name='DB_NAME'
+order by restore_history_id desc

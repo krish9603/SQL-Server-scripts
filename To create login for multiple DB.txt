@@ -1,0 +1,20 @@
+To create login for multiple DB
+------------------------------------------------------
+
+SET NOCOUNT ON;
+
+DECLARE @user_name    SYSNAME
+        , @login_name SYSNAME;
+
+SELECT @user_name = 'QA-PLAT\harshit.gupta',
+       @login_name = 'QA-PLAT\harshit.gupta'
+
+SELECT 'USE ' + QUOTENAME(NAME) + ';
+        CREATE USER ' + QUOTENAME(@user_name)
+       + ' FOR LOGIN ' + QUOTENAME(@login_name)
+       + ' WITH DEFAULT_SCHEMA=[dbo];
+    EXEC sys.sp_addrolemember ''AppSupportRole'',''' + @user_name + ''';
+'
+FROM   sys.databases
+WHERE  database_id > 4
+       AND state_desc = 'ONLINE'

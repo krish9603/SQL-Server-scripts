@@ -1,0 +1,23 @@
+To find the create date and modified date of a SP
+-----------------------------------------------------
+
+Select * from Sys.Objects where name like '%USP_TransactionDetails_Settled%'
+
+
+--------------------------------------------------------
+
+select
+
+db_name(database_id) as database_name,
+
+object_name(object_id) as sp_name,
+
+cached_time,
+
+last_execution_time
+
+from sys.dm_exec_procedure_stats
+
+where object_id = object_id('USP_TransactionDetails_OutStanding')
+
+--where database_id = db_id('admin')

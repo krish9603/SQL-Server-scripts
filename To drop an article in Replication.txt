@@ -1,0 +1,22 @@
+TO DROP SUBSCRIPTION
+exec sp_dropsubscription
+
+@publication = N'Trans_PUB_CoreIssue_perfgsDB02_Partitioned',
+
+@article = N'CBRStatementDetails',
+
+@subscriber = N'all',
+
+@destination_db = N'all'
+
+GO
+
+exec sp_droparticle
+
+@publication = N'Trans_PUB_CoreIssue_perfgsDB02_Partitioned',
+
+@article = N'CBRStatementDetails',
+
+@force_invalidate_snapshot = 1
+
+--GO
