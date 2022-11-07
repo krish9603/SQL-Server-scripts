@@ -1,0 +1,11 @@
+--sys.dm_db_log_space_usage: 
+--This dmv gives info as below,
+--if you notice it can give the size of the log since the last log backup ,
+--it can be used as threshold to take a log backup instead of running in multiple times depending on the application.
+
+
+SELECT total_log_size_in_bytes/1048576.0 AS [Total Log Size in Bytes],
+used_log_space_in_bytes/1048576.0 AS [Used Log Size in Bytes],
+used_log_space_in_percent [Used Log Space in %],
+(total_log_size_in_bytes - used_log_space_in_bytes)/1048576.0 AS [Free log space in MB],
+log_space_in_bytes_since_last_backup/1048576.0 [Log Since Last Log Backup] FROM sys.dm_db_log_space_usage;
